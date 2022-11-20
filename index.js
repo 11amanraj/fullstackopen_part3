@@ -30,7 +30,6 @@ app.get('/api/persons', (request, response) => {
   Contact.find({}).then(contact => {
     response.json(contact)
   })  
-  // response.json(persons);
 })
 
 app.get('/info', (request, response) => {
@@ -62,21 +61,22 @@ app.post('/api/persons', (request, response) => {
   if (!body.name) return response.status(400).json({ error: 'name missing' })
   if (!body.number) return response.status(400).json({ error: 'number missing' })
   
-  const allNames = persons.map(n => n.name)
-  for(let i=0; i<allNames.length; i++) {
-    if(body.name === allNames[i]) {
-      return response.status(400).json({ error: `contact with name ${body.name} already exists` })
-    }
-  }
+  // const allNames = persons.map(n => n.name)
+  // for(let i=0; i<allNames.length; i++) {
+  //   if(body.name === allNames[i]) {
+  //     return response.status(400).json({ error: `contact with name ${body.name} already exists` })
+  //   }
+  // }
 
-  const person = {
-    id: Math.random(),
+  const contact = new Contact({
     name: body.name,
-    number: body.number
-  }
-  
-  persons = persons.concat(person)
-  response.json(person)
+    number: Number(body.number),
+  })
+
+  contact.save().then(saved => {
+    console.log(saved)
+    response.json(saved)
+  })
 })
 
 const PORT = process.env.PORT
