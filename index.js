@@ -33,9 +33,11 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/info', (request, response) => {
-    response.send(`<p>Phonebook has info for ${persons.length}</p>
+  Contact.find({}).then(contact => {
+    response.send(`<p>Phonebook has info for ${contact.length}</p>
         <p>${new Date}</p>
     `)
+  })  
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -62,13 +64,6 @@ app.post('/api/persons', (request, response) => {
   const body = request.body
   if (!body.name) return response.status(400).json({ error: 'name missing' })
   if (!body.number) return response.status(400).json({ error: 'number missing' })
-  
-  // const allNames = persons.map(n => n.name)
-  // for(let i=0; i<allNames.length; i++) {
-  //   if(body.name === allNames[i]) {
-    //     return response.status(400).json({ error: `contact with name ${body.name} already exists` })
-    //   }
-    // }
     
   const contact = new Contact({
     name: body.name,
