@@ -66,10 +66,10 @@ app.post('/api/persons', (request, response) => {
   // const allNames = persons.map(n => n.name)
   // for(let i=0; i<allNames.length; i++) {
   //   if(body.name === allNames[i]) {
-  //     return response.status(400).json({ error: `contact with name ${body.name} already exists` })
-  //   }
-  // }
-
+    //     return response.status(400).json({ error: `contact with name ${body.name} already exists` })
+    //   }
+    // }
+    
   const contact = new Contact({
     name: body.name,
     number: Number(body.number),
@@ -79,6 +79,21 @@ app.post('/api/persons', (request, response) => {
     console.log(saved)
     response.json(saved)
   })
+})
+
+app.put('/api/persons/:id', (request, response) => {
+  const body = request.body
+
+  const contact = {
+    name: body.name,
+    number: body.number
+  }
+
+  Contact.findByIdAndUpdate(request.params.id, contact, {number : body.number})
+    .then(updatedContact => {
+      response.json(updatedContact)
+    })
+    .catch(error => console.log(error))
 })
 
 const PORT = process.env.PORT
