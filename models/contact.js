@@ -15,11 +15,19 @@ mongoose.connect(url)
 const contactSchema = new mongoose.Schema({
   name: {
     type: String,
-    minLength: 3,
+    minlength: 3,
     required: true
   },
   number: {
-    type: Number,
+    type: String,
+    minlength: 9,
+    validate: {
+      validator: (value) => (
+        /* the number must be at least 8 digits, contain a '-' and ther is no limit on max length.*/
+        /^[0-9]{2}[0-9]?-[0-9]{6}[0-9]*/.test(value)
+      ),
+      message: 'Phone number should be in form of 012-345678 or 01-2345678'
+    },
     required: true
   }
 })
