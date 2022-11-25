@@ -60,7 +60,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
   if (!body.name) return response.status(400).json({ error: 'name missing' })
   if (!body.number) return response.status(400).json({ error: 'number missing' })
@@ -71,20 +71,21 @@ app.post('/api/persons', (request, response) => {
   })
 
   contact.save().then(saved => {
-    console.log(saved)
+    console.log(saved);
     response.json(saved)
   })
+  .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response) => {
-  const body = request.body
+  const { name, number } = request.body
 
-  const contact = {
-    name: body.name,
-    number: body.number
-  }
+  // const contact = {
+  //   name: body.name,
+  //   number: body.number
+  // }
 
-  Contact.findByIdAndUpdate(request.params.id, contact, {number : body.number})
+  Contact.findByIdAndUpdate(request.params.id, { name, number }, {number : body.number}, { runValidators: true })
     .then(updatedContact => {
       response.json(updatedContact)
     })
@@ -101,6 +102,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id'})
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({error: error.message})
   }
 
   next(error)
